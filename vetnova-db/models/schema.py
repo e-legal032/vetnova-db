@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, Text, Date, Time, DateTime, ForeignKey
+from sqlalchemy import Column, String, Float, Text, Date, Time, DateTime, ForeignKey, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 Base = declarative_base()
 
@@ -33,7 +35,7 @@ class Paciente(Base):
     turnos = relationship("Turno", back_populates="paciente")
     historia_clinica = relationship("HistoriaClinica", back_populates="paciente")
 
-# 🧑‍⚕️ Roles del personal
+# 🧑⚕️ Roles del personal
 class Rol(Base):
     __tablename__ = 'roles'
 
@@ -46,7 +48,7 @@ class Rol(Base):
 class Personal(Base):
     __tablename__ = 'personal'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     nombre = Column(String)
     email = Column(String)
     rol_id = Column(Integer, ForeignKey('roles.id'))
@@ -75,7 +77,7 @@ class PersonalSede(Base):
     __tablename__ = 'personal_sede'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    personal_id = Column(Integer, ForeignKey('personal.id'))
+    personal_id = Column(UUID(as_uuid=True), ForeignKey('personal.id'))
     sede_id = Column(Integer, ForeignKey('sedes.id'))
 
     personal = relationship("Personal", back_populates="sedes")
@@ -95,7 +97,7 @@ class PersonalEspecialidad(Base):
     __tablename__ = 'personal_especialidad'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    personal_id = Column(Integer, ForeignKey('personal.id'))
+    personal_id = Column(UUID(as_uuid=True), ForeignKey('personal.id'))
     especialidad_id = Column(Integer, ForeignKey('especialidades.id'))
 
     personal = relationship("Personal", back_populates="especialidades")
@@ -106,14 +108,14 @@ class Disponibilidad(Base):
     __tablename__ = 'disponibilidad'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    personal_id = Column(Integer, ForeignKey('personal.id'))
-    dia_semana = Column(String)  # Ej: "lunes", "martes"
+    personal_id = Column(UUID(as_uuid=True), ForeignKey('personal.id'))
+    dia_semana = Column(String)
     hora_inicio = Column(Time)
     hora_fin = Column(Time)
 
     personal = relationship("Personal", back_populates="disponibilidad")
 
-# 📌 Tipos de turno (consulta, cirugía, etc.)
+# 📌 Tipos de turno
 class TipoTurno(Base):
     __tablename__ = 'tipo_turno'
 
@@ -122,7 +124,7 @@ class TipoTurno(Base):
 
     turnos = relationship("Turno", back_populates="tipo")
 
-# 📌 Estado del turno (pendiente, confirmado, cancelado, atendido)
+# 📌 Estado del turno
 class EstadoTurno(Base):
     __tablename__ = 'estado_turno'
 
@@ -141,9 +143,9 @@ class Turno(Base):
     estado_id = Column(Integer, ForeignKey('estado_turno.id'))
     fecha = Column(Date)
     hora = Column(Time)
-    profesional_id = Column(Integer, ForeignKey('personal.id'))
-    creado_por = Column(Integer, ForeignKey('personal.id'))
-    modificado_por = Column(Integer, ForeignKey('personal.id'))
+    profesional_id = Column(UUID(as_uuid=True), ForeignKey('personal.id'))
+    creado_por = Column(UUID(as_uuid=True), ForeignKey('personal.id'))
+    modificado_por = Column(UUID(as_uuid=True), ForeignKey('personal.id'))
     fecha_cancelacion = Column(DateTime)
 
     paciente = relationship("Paciente", back_populates="turnos")
@@ -153,14 +155,14 @@ class Turno(Base):
     creador = relationship("Personal", foreign_keys=[creado_por], back_populates="creados")
     modificador = relationship("Personal", foreign_keys=[modificado_por], back_populates="modificados")
 
-# 📋 Historia clínica estructurada
+# 📋 Historia clínica
 class HistoriaClinica(Base):
     __tablename__ = 'historia_clinica'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     paciente_id = Column(Integer, ForeignKey('pacientes.id'))
     fecha = Column(Date)
-    profesional_id = Column(Integer, ForeignKey('personal.id'))
+    profesional_id = Column(UUID(as_uuid=True), ForeignKey('personal.id'))
     diagnostico = Column(Text)
     tratamiento = Column(Text)
     observaciones = Column(Text)
@@ -169,7 +171,7 @@ class HistoriaClinica(Base):
     profesional = relationship("Personal", back_populates="historias")
     adjuntos = relationship("Adjunto", back_populates="historia")
 
-# 📎 Archivos adjuntos en historia clínica
+# 📎 Archivos adjuntos
 class Adjunto(Base):
     __tablename__ = 'adjuntos'
 

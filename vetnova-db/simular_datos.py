@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from conexion_supabase import engine
 from models.schema import Duenio, Paciente, Personal, Turno
 from models.schema import Rol, TipoTurno, EstadoTurno
-
+import uuid  # ✅ Necesario para generar UUIDs compatibles con Supabase Auth
 
 # 🇪🇸 Inicializar generador de datos ficticios
 # 🇬🇧 Initialize fake data generator
@@ -31,7 +31,7 @@ for _ in range(5):
         telefono=faker.phone_number(),
         email=faker.email(),
         direccion=faker.address(),
-        dni=faker.random_number(digits=8)
+        dni=str(faker.random_number(digits=8))  # ✅ Convertido a string por seguridad
     )
     duenios.append(d)
     session.add(d)
@@ -72,6 +72,7 @@ session.commit()
 personal = []
 for i in range(4):
     prof = Personal(
+        id=uuid.uuid4(),  # ✅ Genera UUID explícito compatible con auth.uid()
         nombre=faker.name(),
         email=faker.email(),
         rol_id=roles[i % len(roles)].id  # Asigna roles rotativos
