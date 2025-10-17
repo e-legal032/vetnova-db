@@ -1,4 +1,4 @@
-![Modelo relacional](vetnova-db/docs/modelo_relacional.png)
+![Modelo relacional](vetnova-db/docs/portada.png)
 # 🐾 VetNova LATAM
 
 **Sistema de gestión de turnos y registros clínicos veterinarios**  
