@@ -1,5 +1,6 @@
 ![Modelo relacional](vetnova-db/docs/portada.png)
 # 🐾 VetNova LATAM
+[![Invitame un cafecito](https://img.shields.io/badge/Cafecito-Apoyar_proyecto-FF813F?style=for-the-badge&logo=coffee&logoColor=white)](https://cafecito.app/anasposito32)
 
 **Sistema de gestión de turnos y registros clínicos veterinarios**  
 Autoría: Ana Sposito  
